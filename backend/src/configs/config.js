@@ -22,12 +22,12 @@ if (missingEnv.length > 0) {
 export const config = {
   env: process.env.NODE_ENV || "development",
 
-  database: {
-    uri: process.env.DATABASE_URI,
-  },
-
   server: {
     port: Number(process.env.PORT) || 5000,
+  },
+
+  database: {
+    uri: process.env.DATABASE_URI,
   },
 
   auth: {

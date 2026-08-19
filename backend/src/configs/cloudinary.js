@@ -1,6 +1,6 @@
-import { config } from "./config";
-import fs from "fs";
 import { v2 as cloudinary } from "cloudinary";
+import fs from "fs";
+import { config } from "./config.js";
 
 cloudinary.config({
   cloud_name: config.cloudinary.cloudName,
@@ -10,11 +10,11 @@ cloudinary.config({
 
 export const uploadOnCloudinary = async (
   localFilePath,
-  folder = "edgeSync/resource",
+  folder = "edgesync/resource"
 ) => {
   try {
     if (!localFilePath) {
-      throw new Error("No localFilePath found");
+      throw new Error("Local file path is required");
     }
 
     const response = await cloudinary.uploader.upload(localFilePath, {
@@ -22,34 +22,30 @@ export const uploadOnCloudinary = async (
       resource_type: "auto",
     });
 
-    fs.unlinkSync(localFilePath);
-
-    console.log("File upload on cloudinary successfull");
-
-    const url = cloudinary.url(result.public_id, {
-      width: 400,
-      height: 400,
-      crop: "fill",
-      gravity: "auto",
-      fetch_format: "auto",
-      quality: "auto",
-      secure: true,
-    });
+    if (fs.existsSync(localFilePath)) {
+      fs.unlinkSync(localFilePath);
+    }
 
     return {
       success: true,
-      message: "image uploade successfully on cloudinary",
-      url,
-      public_id: response.public_id,
-      response,
+      url: response.secure_url,
+      resourceType: response.resource_type,
+      publicId: response.public_id,
+      format: response.format,
+      bytes: response.bytes,
     };
   } catch (error) {
-    console.error("Cloudinary Upload Error:", error);
-    fs.unlinkSync(localFilePath);
+    if (localFilePath && fs.existsSync(localFilePath)) {
+      fs.unlinkSync(localFilePath);
+    }
+
+    console.error("Cloudinary upload failed:", error);
 
     return {
       success: false,
-      message: error.message || "Failed to upload image",
+      message: error.message || "Cloudinary upload failed",
     };
   }
 };
+
+export default cloudinary;

@@ -4,7 +4,8 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 import {
-  authRouter
+  authRouter,
+  resourceRouter
 } from "./routes.js";
 
 const app = express();
@@ -33,5 +34,6 @@ app.get("/api/test", (req, res) => {
 
 // OTHER ROUTES
 app.use("/api/auth", authRouter);
+app.use("/api/resources", resourceRouter);
 
 export default app;
