@@ -1,16 +1,13 @@
-import "dotenv/config";
 import app from "./app.js";
-import connectDB from "./config/db.js"
-import config from "./config/config.js";
+import { connectDB } from "./configs/database.js";
+import { config } from "./configs/config.js";
 
 const startServer = async () => {
-
   await connectDB();
 
-  app.listen(process.env.PORT || 5000, () => {
-    console.log(`http://localhost:${config.PORT || 5000}`);
+  app.listen(config.server.port, () => {
+    console.log(`http://localhost:${config.server.port}`);
   });
-  
-}
+};
 
 startServer();
