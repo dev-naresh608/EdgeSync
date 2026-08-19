@@ -1,7 +1,38 @@
 import Resource from "./resource.model.js";
-import { uploadOnCloudinary } from "../../configs/cloudinary.js";
+import {
+  uploadOnCloudinary,
+  deleteOnCloudinary,
+} from "../../configs/cloudinary.js";
+import { replicateResource } from "../../services/replication.service.js";
+import User from "../user/user.model.js";
 
-export const createResourceSvc = async ({ name, description, file, ownerId }) => {
+export const replicateResourceSvc = async (resource) => {
+  const existingResource = await Resource.findById(resource._id);
+
+  if (existingResource) {
+    return {
+      success: true,
+      message: "Resource already exists",
+      resource: existingResource,
+    };
+  }
+
+  const newResource = await Resource.create(resource);
+
+  return {
+    success: true,
+    message: "Resource replicated successfully",
+    resource: newResource,
+  };
+};
+
+export const createResourceSvc = async ({
+  name,
+  description,
+  file,
+  ownerId,
+  region,
+}) => {
   const cloudinaryResult = await uploadOnCloudinary(file.path);
 
   if (!cloudinaryResult?.success) {
@@ -19,7 +50,10 @@ export const createResourceSvc = async ({ name, description, file, ownerId }) =>
     fileType: file.mimetype,
     fileSize: file.size,
     ownerId,
+    originRegion: region,
   });
+
+  await replicateResource(resource);
 
   return {
     success: true,
@@ -56,7 +90,10 @@ export const getResourceByIdSvc = async (resourceId, ownerId) => {
 };
 
 export const deleteResourceSvc = async (resourceId, ownerId) => {
-  const resource = await Resource.findOneAndDelete({ _id: resourceId, ownerId });
+  const resource = await Resource.findOne({
+    _id: resourceId,
+    ownerId,
+  });
 
   if (!resource) {
     return {
@@ -64,6 +101,25 @@ export const deleteResourceSvc = async (resourceId, ownerId) => {
       message: "Resource not found",
     };
   }
+
+  const cloudinaryResult = await deleteOnCloudinary(resource.publicId);
+
+  if (!cloudinaryResult.success) {
+    return {
+      success: false,
+      message: cloudinaryResult.message || "Failed to delete from Cloudinary",
+    };
+  }
+
+  if (cloudinaryResult.response?.result === "not found") {
+    await Resource.findByIdAndDelete(resourceId);
+    return {
+      success: true,
+      message: "Resource deleted from DB (file was already removed from cloud)",
+    };
+  }
+
+  await Resource.findByIdAndDelete(resourceId);
 
   return {
     success: true,

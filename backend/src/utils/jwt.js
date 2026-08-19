@@ -1,11 +1,12 @@
 import jwt from "jsonwebtoken";
 import { config } from "../configs/config.js";
 
-export const generateAccessToken = (userId) => {
+export const generateAccessToken = (userId,region) => {
   return jwt.sign(
     {
       sub: userId.toString(),
       type: "access",
+      region: region,
     },
     config.auth.accessTokenSecret,
     {
@@ -14,10 +15,11 @@ export const generateAccessToken = (userId) => {
   );
 };
 
-export const generateRefreshToken = (userId) => {
+export const generateRefreshToken = (userId,region) => {
   return jwt.sign(
     {
       sub: userId.toString(),
+      region,
       type: "refresh",
     },
     config.auth.refreshTokenSecret,

@@ -30,8 +30,8 @@ export const registerSvc = async (payload) => {
       region: payload.region,
     });
 
-    const accessToken = generateAccessToken(user._id);
-    const refreshToken = generateRefreshToken(user._id);
+    const accessToken = generateAccessToken(user._id,user.region);
+    const refreshToken = generateRefreshToken(user._id,user.region);
 
     return {
       success: true,
@@ -64,8 +64,8 @@ export const loginSvc = async ({ email, password }) => {
     return { success: false, message: "Invalid email or password" };
   }
 
-  const accessToken = generateAccessToken(user._id);
-  const refreshToken = generateRefreshToken(user._id);
+  const accessToken = generateAccessToken(user._id,user.region);
+  const refreshToken = generateRefreshToken(user._id,user.region);
 
   return {
     success: true,
@@ -100,8 +100,8 @@ export const rotateTokenSvc = async (userId) => {
     return { success: false, message: "User not found" };
   }
 
-  const accessToken = generateAccessToken(user._id);
-  const refreshToken = generateRefreshToken(user._id);
+  const accessToken = generateAccessToken(user._id,user.region);
+  const refreshToken = generateRefreshToken(user._id,user.region);
 
   return {
     success: true,

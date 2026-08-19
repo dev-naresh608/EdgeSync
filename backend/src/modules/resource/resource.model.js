@@ -39,10 +39,15 @@ const resourceSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    originRegion: {
+      type: String,
+      enum: ["india", "singapore", "germany"],
+      required: true,
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Resource = mongoose.model("Resource", resourceSchema);

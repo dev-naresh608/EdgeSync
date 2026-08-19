@@ -5,9 +5,11 @@ import {
   getAllResources,
   getResourceById,
   deleteResource,
+  replicateResourceController
 } from "./resource.controller.js";
 
 import { authenticateAccessToken } from "../../middlewares/auth.middleware.js";
+import {authenticateInternalServer} from "../../middlewares/internalAuth.middleware.js"
 import { upload } from "../../middlewares/upload.middleware.js";
 import { validate } from "../../middlewares/validate.middleware.js"
 import { resourceSchema } from "./resource.schema.js";
@@ -20,6 +22,13 @@ resourceRouter.post(
   upload.single("file"),
   validate(resourceSchema),
   createResource
+);
+
+// for internall replication.
+resourceRouter.post(
+  "/internal/replicate",
+  authenticateInternalServer,
+  replicateResourceController
 );
 
 resourceRouter.get("/", authenticateAccessToken, getAllResources);

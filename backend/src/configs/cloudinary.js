@@ -10,11 +10,14 @@ cloudinary.config({
 
 export const uploadOnCloudinary = async (
   localFilePath,
-  folder = "edgesync/resource"
+  folder = "edgesync/resource",
 ) => {
   try {
     if (!localFilePath) {
-      throw new Error("Local file path is required");
+      return {
+        success: false,
+        message: "Local file path is required",
+      };
     }
 
     const response = await cloudinary.uploader.upload(localFilePath, {
@@ -48,4 +51,26 @@ export const uploadOnCloudinary = async (
   }
 };
 
-export default cloudinary;
+export const deleteOnCloudinary = async (publicId) => {
+  try {
+    if (!publicId) {
+      return {
+        success: false,
+        message: "public id is required",
+      };
+    }
+
+    const response = await cloudinary.uploader.destroy(publicId);
+    return {
+      success: true,
+      response,
+    };
+  } catch (error) {
+    console.error("Cloudinary delete failed:", error);
+
+    return {
+      success: false,
+      message: error.message || "Cloudinary delete failed",
+    };
+  }
+};
