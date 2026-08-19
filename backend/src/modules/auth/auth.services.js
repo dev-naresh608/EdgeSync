@@ -1,12 +1,13 @@
 import bcrypt from "bcrypt";
 
-import { User } from "./user.model.js";
+import User from "../user/user.model.js";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt.js";
 
 const sanitizeUser = (user) => ({
   id: user._id,
-  username: user.username,
+  name: user.name,
   email: user.email,
+  region: user.region,
 });
 
 export const registerSvc = async (payload) => {
@@ -23,9 +24,10 @@ export const registerSvc = async (payload) => {
 
   try {
     const user = await User.create({
-      username: payload.username,
+      name: payload.name,
       email: payload.email,
       password: hashedPassword,
+      region: payload.region,
     });
 
     const accessToken = generateAccessToken(user._id);
@@ -47,7 +49,7 @@ export const registerSvc = async (payload) => {
 };
 
 export const loginSvc = async ({ email, password }) => {
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).select("+password");
 
   if (!user) {
     return {
