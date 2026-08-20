@@ -5,7 +5,8 @@ import cookieParser from "cookie-parser";
 
 import {
   authRouter,
-  resourceRouter
+  resourceRouter,
+  replicationRouter,
 } from "./routes.js";
 
 const app = express();
@@ -35,5 +36,6 @@ app.get("/api/test", (req, res) => {
 // OTHER ROUTES
 app.use("/api/auth", authRouter);
 app.use("/api/resources", resourceRouter);
+app.use("/api/replication", replicationRouter);
 
 export default app;

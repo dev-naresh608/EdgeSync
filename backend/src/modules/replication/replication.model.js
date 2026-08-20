@@ -8,6 +8,12 @@ const replicationSchema = new mongoose.Schema(
       required: true,
     },
 
+    sourceNode: {
+      type: String,
+      enum: ["india", "singapore", "germany"],
+      required: true,
+    },
+
     targetNode: {
       type: String,
       enum: ["india", "singapore", "germany"],

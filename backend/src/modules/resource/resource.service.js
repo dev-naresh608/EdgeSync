@@ -4,28 +4,6 @@ import {
   deleteOnCloudinary,
 } from "../../configs/cloudinary.js";
 import { replicateResource } from "../replication/replication.service.js";
-import User from "../user/user.model.js";
-import { response } from "express";
-
-export const replicateResourceSvc = async (resource) => {
-  const existingResource = await Resource.findById(resource._id);
-
-  if (existingResource) {
-    return {
-      success: true,
-      message: "Resource already exists",
-      resource: existingResource,
-    };
-  }
-
-  const newResource = await Resource.create(resource);
-
-  return {
-    success: true,
-    message: "Resource replicated successfully",
-    resource: newResource,
-  };
-};
 
 export const createResourceSvc = async ({
   name,

@@ -3,29 +3,9 @@ import {
   getAllResourcesSvc,
   getResourceByIdSvc,
   deleteResourceSvc,
-  replicateResourceSvc,
 } from "./resource.service.js";
 
 import { serverError, badRequest } from "../../utils/response.js";
-
-export const replicateResourceController = async (req, res) => {
-  try {
-    const resource = req.body;
-
-    const response = await replicateResourceSvc(resource);
-
-    if (!response?.success) {
-      return badRequest(
-        res,
-        response?.message || "Resource replication failed"
-      );
-    }
-
-    return res.status(201).json(response);
-  } catch (error) {
-    return serverError(res, error, "Resource replication failed");
-  }
-};
 
 export const createResource = async (req, res) => {
   try {
