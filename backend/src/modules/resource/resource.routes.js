@@ -24,7 +24,7 @@ resourceRouter.post(
   createResource
 );
 
-// for internall replication.
+// for internal replication.
 resourceRouter.post(
   "/internal/replicate",
   authenticateInternalServer,

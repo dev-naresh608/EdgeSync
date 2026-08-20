@@ -3,8 +3,9 @@ import {
   uploadOnCloudinary,
   deleteOnCloudinary,
 } from "../../configs/cloudinary.js";
-import { replicateResource } from "../../services/replication.service.js";
+import { replicateResource } from "../replication/replication.service.js";
 import User from "../user/user.model.js";
+import { response } from "express";
 
 export const replicateResourceSvc = async (resource) => {
   const existingResource = await Resource.findById(resource._id);
@@ -53,12 +54,13 @@ export const createResourceSvc = async ({
     originRegion: region,
   });
 
-  await replicateResource(resource);
+  const replication = await replicateResource(resource);
 
   return {
     success: true,
     message: "Resource created successfully",
     resource,
+    replication,
   };
 };
 
